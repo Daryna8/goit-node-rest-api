@@ -3,8 +3,15 @@ import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../helpers/ctrlWrapper.js";
 
 const getAllContacts = async (req, res, next) => {
-  const result = await contactsService.listContacts();
-  res.status(200).json(result);
+  const { _id: owner } = req.user;
+  const { page = 1, limit = 20 } = req.query;
+  const skip = (page - 1) * limit;
+  const result = await contactsService.getContactsByFilter(
+    { owner },
+    { skip, limit }
+  );
+  const total = await contactsService.getContactsCountByFilter({ owner });
+  res.status(200).json({ total, result });
 };
 
 const getOneContact = async (req, res, next) => {
@@ -27,7 +34,8 @@ const deleteContact = async (req, res, next) => {
 };
 
 const createContact = async (req, res, next) => {
-  const result = await contactsService.addContact(req.body);
+  const { _id: owner } = req.user;
+  const result = await contactsService.addContact({ ...req.body, owner });
 
   res.status(201).json(result);
 };

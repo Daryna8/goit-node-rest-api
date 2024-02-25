@@ -4,6 +4,14 @@ function listContacts() {
   return Contact.find();
 }
 
+function getContactsByFilter(filter, query = {}) {
+  return Contact.find(filter, "-createdAt -updatedAt", query);
+}
+
+function getContactsCountByFilter(filter) {
+  return Contact.countDocuments(filter);
+}
+
 function getContactById(contactId) {
   return Contact.findById(contactId);
 }
@@ -26,6 +34,8 @@ function updateStatusContact(contactId, updatedData) {
 
 export default {
   listContacts,
+  getContactsByFilter,
+  getContactsCountByFilter,
   getContactById,
   removeContact,
   addContact,
