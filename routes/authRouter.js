@@ -1,7 +1,11 @@
 import express from "express";
 import authControllers from "../controllers/authControllers.js";
 import validateBody from "../helpers/validateBody.js";
-import { signupSchema, loginSchema } from "../schemas/usersSchemas.js";
+import {
+  signupSchema,
+  loginSchema,
+  verifySchema,
+} from "../schemas/usersSchemas.js";
 import authtenticate from "../middlewares/autenticate.js";
 import upload from "../middlewares/upload.js";
 
@@ -28,6 +32,14 @@ authRouter.patch(
   upload.single("photo"),
   authtenticate,
   authControllers.changeAvatar
+);
+
+authRouter.get("/verify/:verificationToken", authControllers.verify);
+
+authRouter.post(
+  "/users/verify",
+  validateBody(verifySchema),
+  authControllers.resendVerificationEmail
 );
 
 export default authRouter;
